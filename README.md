@@ -13,7 +13,7 @@ As inputs:
 For more details on the physics implemented in the software, see the reference pre-print [1].
 
 ## Installation
-Instructions on how to install and use this software are available in the PDF manual located in this directory and named: [UserGuide_DC_WAS.pdf](UserGuide.pdf)
+Instructions on how to install and use this software are available in the PDF manual located in this directory and named: [UserGuide_DC_WAS.pdf](UserGuide_DC_WAS.pdf)
 
 ## Development
 - Development is hosted on GitHub repository:
