@@ -2,7 +2,7 @@
 FC	= mpif90
 FFLAGS  = -O3
 LFLAGS  = $(FFLAGS)
-EXE	= DC_OBS_run
+EXE	= DC_WAS_run
 SRC     = modules.f90 \
 	 main.f90 \
 	 get_input_data.f90 \
