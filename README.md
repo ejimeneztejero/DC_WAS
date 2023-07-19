@@ -1,4 +1,3 @@
-# DC_WAS
 # User Manual: Downward Continuation and redatuming to the seafloor of WAS (OBS) data
 
 This is the first version of the software for the Downward Continuation (DC) of marine OBS field data. The DC is a virtual transformation of the OBS gathers from datum 1 (shots at the sea surface) to datum 2 (shots at seafloor).
