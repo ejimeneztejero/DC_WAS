@@ -1,22 +1,21 @@
 # User Manual: Downward Continuation and redatuming to the seafloor of WAS (OBS) data
 
-This is the first version of the software for the Downward Continuation (DC) of marine OBS field data. The DC is a virtual transformation of the OBS gathers from datum 1 (shots at the sea surface) to datum 2 (shots at seafloor).
+Welcome to the user manual for the Downward Continuation (DC) software designed specifically for marine OBS (Ocean Bottom Seismometer) field data. The DC process involves a virtual transformation of OBS gathers from datum 1 (shots at the sea surface) to datum 2 (shots at the seafloor).
 
 As inputs:
-- Each OBS gather is required in a file with SU format.
-- The bathymetry of the shots in a ascii file.
-- Also, a series of parameters have to be provided through an input file which is read in the execution line.
-- By default, the p-wave velocity model for the water column is considered constant but also XBT data can be provided to build a specific Vp model.
-
-For more details on the physics implemented in the software, see the reference pre-print [1].
+- Each OBS gather must be provided in a file with SU format.
+- The bathymetry data of the shots should be provided in an ASCII file.
+- Additionally, a series of parameters need to be provided through an input file, which is read during execution.
+- By default, the software assumes a constant p-wave velocity model for the water column. However, you can also provide XBT data to construct a specific Vp model.
 
 ## Installation
-Instructions on how to install and use this software are available in the PDF manual located in this directory and named: [UserGuide_DC_WAS.pdf](UserGuide_DC_WAS.pdf)
+- To install and use this software effectively, please refer to the instructions provided in the PDF manual located in this directory:  [UserGuide_DC_WAS.pdf](UserGuide_DC_WAS.pdf)
 
 ## Development
 - Development is hosted on GitHub repository:
 [github/ejimeneztejero/DC_WAS](https://github.com/ejimeneztejero/DC_WAS).
 
 ## Author
-- The author is Clara Estela Jiménez Tejero.
-- This software was developed at Barcelona Center for Subsurface Imaging, at ICM-CSIC.
+- Clara Estela Jiménez Tejero is the author of this software.
+- The software was developed at the Barcelona Center for Subsurface Imaging, ICM-CSIC.
+Feel free to customize this README as needed based on your specific requirements and preferences.
