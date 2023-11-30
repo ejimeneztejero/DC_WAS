@@ -17,7 +17,9 @@ implicit none
   integer, parameter :: unit_DC=300
  
   INTEGER(4), parameter :: size_su_header = 60
+  
   INTEGER(4), parameter :: byte_fldr = 9
+  INTEGER(4), parameter :: byte_tracr = 5
   INTEGER(4), parameter :: byte_scalco = 71
   INTEGER(4), parameter :: byte_sx = 73
   INTEGER(4), parameter :: byte_sy = 77
@@ -104,7 +106,7 @@ subroutine read_parfile(rank)
 
   input_rewrite=0
   NumOBS=1
-  byte_shotnumber=byte_fldr
+  byte_shotnumber=byte_tracr
   sx_sy_header=0;
   TWT_option=0;
   endianness_data=1;endianness_machine=0;
