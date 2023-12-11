@@ -50,50 +50,6 @@ IMPLICIT NONE
 
 END SUBROUTINE READ_DATA
 
-subroutine WRITE_INPUT(iOBS,nSS,SG)	!!paralelizar
-
-USE mod_parfile
-USE mod_data_arrays
-
-implicit none
-
-integer :: i,j,k,nh,it,iOBS
-INTEGER :: nSS
-INTEGER(4) :: pos_byte	
-
-real :: SG(nt,nSS)
-REAL(4), ALLOCATABLE :: sudata(:,:)
-
-CHARACTER(len=500) :: file_name,Str,Str_DC
-
-nh = size_su_header
-
-ALLOCATE(sudata(nh,nSS))
-sudata=0.;
-
-! Loop trace by trace
-
-do j=1,nSS	!!nSS: NumShots
-
-	pos_byte = pos_byte_su(j)
-
-	READ(unit0+iOBS, pos=pos_byte)  sudata(1:nh,j)	!! read data
-
-enddo
-
-do j=1,nSS
-
-	pos_byte = pos_byte_su(j)
-
-	WRITE(unit_DC0+iOBS, pos=pos_byte)  sudata(1:nh,j)	!! write header
-        WRITE(unit_DC0+iOBS, pos=pos_byte+nh*4) SG(1:nt,j)	!! real traces
-
-enddo
-
-deallocate(sudata)
-
-END SUBROUTINE WRITE_INPUT
-
 subroutine WRITE_OUTPUT(iOBS,nSS,SG)	!!paralelizar
 
 USE mod_parfile
@@ -419,11 +375,6 @@ write(OBS_num,*) iOBS
 file_name = trim(adjustl(folder_output)) // 'DC_' // trim(adjustl(original_file(iOBS)))
 open(unit_DC+iOBS,FILE=file_name,ACCESS=access,FORM=form,CONVERT='BIG_ENDIAN',STATUS='unknown')
 
-if(filtering.ne.0)	then
-	file_name = trim(adjustl(folder_output)) // 'Filtered_' // trim(adjustl(original_file(iOBS)))
-	open(unit_DC0+iOBS,FILE=file_name,ACCESS=access,FORM=form,CONVERT='BIG_ENDIAN',STATUS='unknown')
-endif
-
 !maxbytes=maxval(sizeof(:))
 
 END SUBROUTINE open_su_files
@@ -438,70 +389,7 @@ integer :: iOBS
 close(unit0+iOBS)
 close(unit_DC+iOBS)
 
-if(filtering.ne.0)close(unit_DC0+iOBS)
 
 end subroutine close_su_files
 
 
-subroutine time_filter(Data_trace,nt,dt,Num,f1,fc)
-
-implicit none
-
-        integer :: nt,Num,nt2,zero_pad,ind,typef
-        real :: dt,fe,var,fc,f1
-        real :: Data_trace(nt,Num)
-        real,allocatable :: tmp(:)
-        integer :: j,i,k
-        logical :: isnotCero            ! Variable para almacenar si el vector es cero
-
-        typef=3
-        zero_pad=24
-        nt2=zero_pad*nt
-        allocate(tmp(nt2))
-        fe=1/dt
-
-        do i=1,Num
-
-                tmp=0.
-                tmp((zero_pad-1)*nt+1:nt2)=Data_trace(:,i)
-
-                call is_not_cero(nt,Data_trace(:,i),isnotCero)
-
-                if(isnotCero)   then
-
-!                       do j=1,nt
-!                               write(55,*)j,Data_trace(j,i)
-!                       enddo
-!                        call filters(tmp,nt2,fe,1,typef,f1,fc)
-!                        Data_trace(:,i)=tmp(nt2-nt+1:nt2)
-
-
-                endif
-
-        enddo
-
-
-        deallocate(tmp)
-
-return
-end
-
-
-subroutine is_not_cero(nt,data1d,isnotCero)
-implicit none
-
-    integer :: i,nt
-    real :: data1d(nt)
-    logical :: isnotCero
-
-    isnotCero=.FALSE.
-
-    ! Verificar si todas las componentes son cero
-    do i = 1, nt
-        if (data1d(i) /= 0.0) then
-            isnotCero = .TRUE.
-            exit ! Puedes salir del bucle en cuanto encuentres un valor no cero
-        end if
-    end do
-
-end subroutine is_not_cero

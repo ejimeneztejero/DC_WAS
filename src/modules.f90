@@ -13,7 +13,6 @@ implicit none
 
   ! Control file variables
   integer, parameter :: unit0=100
-  integer, parameter :: unit_DC0=200
   integer, parameter :: unit_DC=300
 
   INTEGER(4), parameter :: size_su_header = 60
@@ -35,13 +34,11 @@ implicit none
   integer :: save_gmt,save_matlab
 
   integer :: maxbytes
-  integer :: filtering
   
   real :: dmodel,dt
   real :: shot_depth
   real :: added_space_model_X,added_space_model_Y,water_velocity
   real :: dshots,time
-  real :: land_velocity
 
   real :: f1,f2
 
@@ -108,14 +105,11 @@ subroutine read_parfile(rank)
   endianness_data=1;endianness_machine=0;
   added_space_model_X=0.
   added_space_model_Y=0.
-  land_velocity=0.
   water_velocity=1500.
   dmodel=25;
   dt=0;
   shot_depth=0;
   nt=0;
-  filtering=0;
-  f1=1.;f2=6.;
   save_gmt=0;save_matlab=0;
 
   open(fh, file=par_file)
@@ -178,14 +172,6 @@ subroutine read_parfile(rank)
            read(buffer, *, iostat=ios) nt
         case ('shot_depth:')
            read(buffer, *, iostat=ios) shot_depth
-        case ('filtering:')
-           read(buffer, *, iostat=ios) filtering
-        case ('f1:')
-           read(buffer, *, iostat=ios) f1
-        case ('f2:')
-           read(buffer, *, iostat=ios) f2
-        case ('land_velocity:')
-           read(buffer, *, iostat=ios) land_velocity
         case ('water_velocity:')
            read(buffer, *, iostat=ios) water_velocity
         case ('save_gmt:')
