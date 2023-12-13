@@ -80,6 +80,7 @@ if(rank.eq.0)	then
 endif
 
 call get_geometry(NumBat,length_model,nmodel,add1)	!!fuera del loop
+if(rank.eq.0)write(*,*)"Average distance between shots (meters), dshots: ",dshots
 
 do i=1,NumShots
 
@@ -232,11 +233,11 @@ USE mod_data_arrays
 
 implicit none
 
-        integer :: j,k,ii,ishot
+        integer :: j,k,ii,ishot,nn
 	integer :: iline,itr,NumBat,ERR,nlines
         integer :: shotID,nmodel
 
-        real :: xs,ys,bat,x1,y1,twt,add1
+        real :: xs,ys,bat,x1,y1,twt,add1,dd
         real :: length_model
 
         character (len=500) :: file_name
@@ -314,6 +315,13 @@ implicit none
                 endif
 
         enddo
+
+	nn=0
+        do ishot=2,nlines !!number of lines nav_file
+		nn=nn+1
+		dd=dd+abs(pos_shot(ishot)-pos_shot(ishot-1))
+	enddo
+	dshots=ceiling(dd/nn)
 
         file_name=trim(adjustl(folder_output))//'shots_position.txt'
         open(unit=12,file=file_name,status='unknown')

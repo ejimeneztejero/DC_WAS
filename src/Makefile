@@ -10,8 +10,6 @@ SRC     = modules.f90 \
 	 acoustic_solver.f90 \
 	 auxiliar.f90	
 
-#	 filters.f90 fftpack.f90 \
-
 # No need to edit below this line
 .SUFFIXES: .f90 .o
 

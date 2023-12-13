@@ -203,8 +203,8 @@ write(*,*)"	  \___/  |___/ |___/   |___/  /_/ \_\   |_|   /_/ \_\"
 write(*,*)
 write(*,*)
 write(*,*)                                                                      
-write(*,*)"		Release (2022)			"
-write(*,*)"		Author: Clara Estela Jiménez Tejero	"
+write(*,*)"		Release (December 2023)			"
+write(*,*)"		Author: Clara Estela Jimenez Tejero	"
 write(*,*)"		email: ejimenez@icm.csic.es 		"
 write(*,*)"		Barcelona Center for Subsurface Imaging "
 write(*,*)"		Instituto de Ciencias Marinas (ICM-CSIC)"
@@ -320,19 +320,7 @@ if(i.eq.4)	then
 write(*,*)""
 write(*,*)""
 write(*,*)"*** WARNING: numtasks do not need to be greater than variable NumOBS"
-write(*,*)"***          You are wasting energy. Please, next time you run a job, set in you MPI execution line, numtasks=",NumOBS
-write(*,*)""
-write(*,*)" SMALL DECISIONS CAN SAVE OUR PLANET "
-write(*,*)"             _____"
-write(*,*)"          .-'.  ':'-."
-write(*,*)"        .''::: .:    '."
-write(*,*)"       /   :::::'      \"
-write(*,*)"      ;.    ':' `       ;"
-write(*,*)"      |       '..       |"
-write(*,*)"      ; '      ::::.    ;"
-write(*,*)"       \       '::::   /"
-write(*,*)"        '.      :::  .'"
-write(*,*)"          '-.___'_.-'"
+write(*,*)"***          Please, set in you MPI execution line, a maximum number of numtasks=",NumOBS
 write(*,*)""
 
 endif

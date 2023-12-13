@@ -78,7 +78,6 @@ subroutine read_parfile(rank)
   if(rank.eq.0)write(*,*)'Number of arguments passed after executable name: ',icount
   if(rank.eq.0)write(*,*)'Your Parfile containing input parameteres must be passed the last one in the command execution line'
 
-!  if ( icount.eq.3 ) then
 	call getarg(icount, par_file)	! The file name of the executable.
 	if(rank.eq.0)write(*,*)'name par_file: ',trim(adjustl(par_file))
 	file_name = trim(adjustl(par_file))
@@ -88,7 +87,6 @@ subroutine read_parfile(rank)
                 if(rank.eq.0)call ascii_art(2)
                 stop
         endif
-!  endif
 
   write(*,*)'par_file: ',trim(adjustl(par_file))
 
@@ -98,15 +96,16 @@ subroutine read_parfile(rank)
   su_file_DC = 'null'
   temp_DC = 'temp_DC'
 
-  NumOBS=1
+  water_velocity=1500.
+
+  NumOBS=0
   byte_shotnumber=byte_tracr
   sx_sy_header=0;
   TWT_option=0;
   endianness_data=1;endianness_machine=0;
   added_space_model_X=0.
   added_space_model_Y=0.
-  water_velocity=1500.
-  dmodel=25;
+  dmodel=0;
   dt=0;
   shot_depth=0;
   nt=0;
@@ -191,17 +190,16 @@ folder_output = trim(adjustl(folder_output)) // '/'
 
 time=(nt-1)*dt
 
-if(dmodel.eq.0)dmodel=dshots
-
-if(dmodel.gt.dshots)	then
-	if(rank.eq.0)write(*,*)'dmodel cannot be greather than dshots, instead, it is set to dshots'
-	dmodel=dshots
-endif
-
 NumShots=shot_fin-shot_init+1
 
 if(added_space_model_X.eq.0)added_space_model_X=20.*dmodel
 if(added_space_model_Y.eq.0)added_space_model_Y=20.*dmodel
+
+if(dmodel.eq.0)	then
+	if(rank.eq.0)write(*,*)'ERROR: dmodel cannot be cero'
+        if(rank.eq.0)call ascii_art(2)
+	stop
+endif
 
 if(sx_sy_header.ne.0.and.sx_sy_header.ne.1)	then
 	if(rank.eq.0)write(*,*)'ERROR: sx_sy_header should be set to 0 or 1 in ',trim(adjustl(par_file))
