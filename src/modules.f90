@@ -143,8 +143,8 @@ subroutine read_parfile(rank)
            read(buffer, *, iostat=ios) obs_data
         case ('nav_file:')
            read(buffer, *, iostat=ios) nav_file
-        case ('su_file:')
-           read(buffer, *, iostat=ios) su_file0
+!        case ('su_file:')
+!           read(buffer, *, iostat=ios) su_file0
         case ('vp_file:')
            read(buffer, *, iostat=ios) vp_file
         case ('input_folder:')
@@ -157,8 +157,8 @@ subroutine read_parfile(rank)
            read(buffer, *, iostat=ios) dt
         case ('dmodel:')
            read(buffer, *, iostat=ios) dmodel
-        case ('dshots:')
-           read(buffer, *, iostat=ios) dshots
+        !case ('dshots:')
+        !   read(buffer, *, iostat=ios) dshots
         case ('shot_init:')
            read(buffer, *, iostat=ios) shot_init
         case ('shot_fin:')
@@ -358,7 +358,7 @@ write(*,*)'shot_init: ',shot_init
 write(*,*)'shot_fin: ',shot_fin
 write(*,*)'nt: ',nt
 write(*,*)'dt (s): ',dt
-write(*,*)'dshots (m): ',dshots
+!write(*,*)'dshots (m): ',dshots
 write(*,*)'dmodel (m): ',dmodel
 write(*,*)'shot_depth (m): ',shot_depth
 if(.NOT. vp_exist)write(*,*)'water_velocity constant: ',water_velocity

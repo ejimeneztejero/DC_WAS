@@ -408,7 +408,6 @@ pos_read=byte_shotnumber
 nh = size_su_header	!Size su header = 60*4 bytes
 
 ! READ SU FILES
-!file_name = original_file
 file_name = trim(adjustl(folder_input)) // original_file(iOBS)
 
 READ(unit0+iOBS,pos=pos_read) shotID_1
