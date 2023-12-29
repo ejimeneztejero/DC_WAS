@@ -1,6 +1,6 @@
-# User Manual: Downward Continuation and redatuming to the seafloor of WAS (OBS) data
+# User Manual: Downward Continuation and redatuming to the seafloor of Wide Angle Seismic (WAS) data
 
-Welcome to the user manual for the Downward Continuation (DC) software designed specifically for marine OBS (Ocean Bottom Seismometer) field data. The DC process involves a virtual transformation of OBS gathers from datum 1 (shots at the sea surface) to datum 2 (shots at the seafloor).
+Welcome to the user manual for the Downward Continuation (DC) software designed specifically for marine Ocean Bottom Seismometer (OBS) field data. The DC process involves a virtual transformation of OBS gathers from datum 1 (shots at the sea surface) to datum 2 (shots at the seafloor).
 
 As inputs:
 - Each OBS gather must be provided in a file with SU format.
