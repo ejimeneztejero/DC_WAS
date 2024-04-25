@@ -1,0 +1,324 @@
+\documentclass[11pt, oneside]{article}   	% use "amsart" instead of "article" for AMSLaTeX format
+%\documentclass{article}
+
+\usepackage{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+%\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+\usepackage{amssymb}
+\usepackage{hyperref}
+\hypersetup{
+ colorlinks=true,
+ linkcolor=blue,
+ filecolor=magenta, 
+ urlcolor=cyan,
+}
+\urlstyle{same}
+
+%\usepackage[spanish, es-nolayout]{babel}
+%\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\usepackage{amsmath, amsthm, amsfonts}
+\usepackage{tabularx}
+\usepackage{amssymb,latexsym}
+\usepackage{graphicx}
+\usepackage[titletoc]{appendix}
+\usepackage{color}
+\usepackage{authblk}
+\usepackage{epstopdf}
+\usepackage{xr}
+\usepackage{cleveref}
+
+
+\title{User Guide: \\Open Source HPC Software for Redatuming 2D WAS Field Data}
+
+\author{Author: Clara Estela Jim\'enez Tejero. Developed at BCSI group at ICM-CSIC (Barcelona, Spain).}
+
+\date{}							% Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\begin{abstract}
+
+Introducing a user friendly open-source HPC software designed for efficiently redatuming 2D Wide-Angle Seismic (WAS) field data to the seabed, accommodating any seafloor relief. The software employs the acoustic wave equation in reverse time, enabling redatuming of OBS gathers.
+
+The input consists of OBS data stored in a series of SU files (one per OBS), along with the bathymetry of the shots in a single ASCII file. Furthermore, users can specify various parameters via an input file provided during execution. By default, a constant p-wave velocity model is used for the column water, but the option to create a custom Vp water model using XBT data is also available.
+
+OBS field data should be muted from time 0 to the first arrival, to avoid the propagation of noise. As well, the field data should be cutted at certain time to avoid the propagation of the multiple.
+
+\end{abstract}
+\section{Software Requirements}\label{sec1}
+
+The software presented here is an open-source code developed in Fortran 90 for High-Performance Computing (HPC) architecture, built with Open MPI.
+
+\begin{itemize}
+\item \textbf{Parallel Compilation:} The software requires parallel compilation using MPI. Ensure that the mpif90 command is installed for compilation and the mpirun command for execution.
+
+\item \textbf{Seismic Unix Tool:} To work with the software, you need to have the Seismic Unix tool \cite{SU} installed. This open-source software is necessary for handling, converting, and visualizing seismic binary data files in SU format.
+
+\item \textbf{System Requirements:} For optimal performance, it is recommended to run the software on a cluster. However, it is also possible to run it on a local computer.
+
+\end{itemize}
+
+\section{Installation}\label{sec2}
+
+To install the software, follow these steps:
+
+\begin{enumerate}
+
+  \item \textbf{Automatic Installation:}
+    \begin{itemize}
+      \item Open the terminal and navigate to the '{src/}' folder.
+      \item Type the following command to compile the software:\\
+        \begin{verbatim}
+      make
+        \end{verbatim}
+
+    \end{itemize}
+
+  \item \textbf{Manual Installation:}
+    \begin{itemize}
+      \item First, compile the modules:\\
+        \begin{verbatim}
+      mpif90 -c modules.f90
+  \end{verbatim}
+
+      \item Next, compile all files and generate the executable `DC\_WAS\_run:\\
+        \begin{verbatim}
+      mpif90 *.f90 -o DC_WAS_run	
+        \end{verbatim}
+
+    \end{itemize}
+
+  \item \textbf{Setting up the PATH:}
+    \begin{itemize}
+      \item After the software is properly installed, include its path in your .bashrc file 
+      to make the executable accessible from any location:\\
+        \begin{verbatim}
+      export PATH="/home/user/path/to/src:\$PATH"
+        \end{verbatim}
+    \item Replace "/home/user/path/to/src" with the actual path to the '{src/}' folder.
+    \end{itemize}
+    
+\end{enumerate}
+
+
+\section{Quick Start}\label{sec3}
+
+To quickly get started with the software, follow these steps:
+
+\begin{enumerate}
+  \item \textbf{Input Parameter File:} Assign values to all the parameters in the input parameter file, as specified in Section \ref{sec4a}.
+
+  \item \textbf{Input Folder Contents:} Place the following items in the input folder:
+    \begin{itemize}
+      \item \textbf{WAS Field Data:} For each OBS gather recorded, provide a separate SU file (e.g., OBS\_1.su, OBS\_2.su, OBS\_3.su for three OBSs). Ensure that each data file is converted to SU format (for more information, refer to the SU tutorial~\cite{SU} or the User Guide for DC streamer data available in the same GitHub account\footnote{https://github.com/ejimeneztejero/DC}).
+
+      \item \textbf{Bathymetry and Navigation Information:} Prepare a single ASCII file containing bathymetry information for the shots. Please, include here as well navigation data if not specified in SU headers (see Section \ref{sec4b} for further details).
+    \end{itemize}
+
+  \item \textbf{Running the Program:} Execute the program (DC\_WAS\_run) with the specific parfile in the terminal using the following command:
+  \begin{verbatim}
+  mpirun -np numtasks DC_WAS_run parfile
+  \end{verbatim}
+  Here, 'numtasks' refers to the number of cores used for parallelizing the calculation. For optimal performance, set 'numtasks' equal to the number of OBSs.
+
+\end{enumerate}
+
+\section{Input data}\label{sec4}
+
+\subsection{Input Parameter File}\label{sec4a}
+
+The input parameter file is an ASCII file with a specific structure. Each line contains a parameter name followed by a colon and at least one space, and then the corresponding parameter value. The list of parameters and their descriptions are as follows:
+
+\begin{enumerate}
+\item \textbf{endianness\_machine:} Integer variable
+\begin{itemize}
+\item Set to 0 (little endian) or 1 (big endian).
+\item Default value: 0 (little endian).
+\end{itemize}
+
+\item \textbf{endianness\_data:} Integer variable
+\begin{itemize}
+\item Set to 0 (little endian) or 1 (big endian).
+\item Default value: 1 (big endian).
+\end{itemize}
+
+\item \textbf{input\_folder:} Character variable
+\begin{itemize}
+\item Path to the folder containing input files.
+\item Example: \texttt{folder\_input: '/home/user/DCtest/data/input'}.
+\end{itemize}
+
+\item \textbf{output\_folder:} Character variable
+\begin{itemize}
+\item Path to the folder where output files will be stored.
+\item Example: \texttt{folder\_output: '/home/user/DCtest/data/output'}.
+\end{itemize}
+
+\item \textbf{obs\_file\_list:} Character variable
+\begin{itemize}
+\item Name of ascii file containing the name of the different OBS data files, one file per OBS. For example, for 5 OBS gathers. In this case, 'obs\_file\_list: data.txt', where the file data.txt is an ascii file where each line corresponds to the name of each SU file containing each OBS gather:\\
+obs1.su \\
+obs2.su \\
+obs3.su \\
+obs4.su \\
+obs5.su
+\end{itemize}
+
+\item \textbf{byte\_shotnumber:} Integer variable
+\begin{itemize}
+\item  Number of byte in SU header where the shotID must be read. 
+\item Example: "byte\_shotnumber: 9" if read in fldr header.
+\item Default value: 5 (reading shotID from tracr).
+\end{itemize}
+
+\item \textbf{nav\_file:} Character variable
+\begin{itemize}
+\item Name of the bathymetry ASCII file containing bathymetry information and, optionally, navigation data.
+\item More information in Section \ref{sec4b}.
+\end{itemize}
+
+\item \textbf{TWT\_option}: integer variable 
+	\begin{itemize}
+	\item If 'TWT\_option: 1', the bathymetry information has to be given as the Two-Way-Traveltime (TWT) in the nav\_file (in seconds).
+	\item If not included, the default value is 'TWT\_option: 0'. In this case, the bathymetry information must be given in meters in the input nav\_file.
+	\item For more details, check section $\ref{sec4b}$.
+	\end{itemize}
+  
+ \item \textbf{sx\_sy\_header:} Integer variable
+\begin{itemize}
+\item Set to 1 to read shot positions from the headers of the SU files ('sx' and 'sy' in the header). In this case, 'scalco' parameter is automatically read to obtain sx and sy as UTM coordinates (in meters).
+\item Default value: 0 (positions read from the ASCII file, explained in Section \ref{sec4b}).
+\end{itemize}
+
+\item \textbf{dt:} Real variable
+\begin{itemize}
+\item Time sampling of the OBS field data (seconds).
+\end{itemize}
+
+\item \textbf{nt:} Integer variable
+\begin{itemize}
+\item Number of time steps.
+\end{itemize}
+
+\item \textbf{NumOBS:} Integer variable
+\begin{itemize}
+\item Number of OBSs.
+\end{itemize}
+
+\item \textbf{shot\_init:} Integer variable
+\begin{itemize}
+\item shotID of the first shot.
+\end{itemize}
+
+\item \textbf{shot\_fin:} Integer variable
+\begin{itemize}
+\item shotID of the last shot.
+\end{itemize}
+
+\item \textbf{shot\_depth:} Real variable
+\begin{itemize}
+\item Depth of the shots (meters).
+\end{itemize}
+
+\item \textbf{dmodel:} Real variable
+\begin{itemize}
+\item Space sampling of the p-wave velocity model (meters).
+\item Default value: 25.
+\end{itemize}
+
+\item \textbf{water\_velocity:} Real variable
+\begin{itemize}
+\item Water velocity model (meters/second).
+\item Default value: 1500.
+\end{itemize}
+
+\item \textbf{vp\_file:} Character variable
+\begin{itemize}
+\item Name of the file containing XBT data for each specific OBS gather.
+\item Needed to describe the water column with a realistic velocity model.
+\item More details in the description.
+\item If not included, the water column is considered homogeneous using the velocity value specified in the parameter 'water\_velocity'.
+\end{itemize}
+
+\item \textbf{save\_gmt:} Integer variable
+\begin{itemize}
+\item Set to 1 to also save OBS gathers in ASCII gmt format: X(1:NumShots), Y(1:nt).
+\item Default value: 0 (not activated).
+\end{itemize}
+
+\item \textbf{save\_matlab:} Integer variable
+\begin{itemize}
+\item Set to 1 to also save OBS gathers in ASCII MATLAB format: OBS gather(1:nt, 1:NumShots).
+\item Default value: 0 (not activated).
+\end{itemize}
+\end{enumerate}
+
+\subsection{Bathymetry and Navigation Information}\label{sec4b}
+
+The bathymetry information for the shots must be provided in an ASCII file. Depending on the 'sx\_sy\_header' parameter's activation in the input parameter file:
+
+\begin{itemize}
+  \item If 'sx\_sy\_header: 0', the navigation (in UTM coordinates) must be included in the same ASCII file.
+  \item If 'sx\_sy\_header: 1', the navigation (in UTM coordinates) is automatically extracted from the SU headers and doesn't need to be included in this file.
+\end{itemize}
+
+There are two options to structure the bathymetry/navigation file:
+
+\begin{itemize}
+  \item If 'sx\_sy\_header: 0', the file must have a 4-column structure:
+
+%\begin{verbatim}
+  shotID$_1$   X$_1$ (UTM, meters)   Y$_1$ (UTM, meters)   Z$_1$ (meters) \\
+  shotID$_2$   X$_2$ (UTM, meters)   Y$_2$ (UTM, meters)   Z$_2$(meters) \\ 
+  ...        ...                 ...                 ... \\
+  shotID$_n$  X$_n$ (UTM, meters)   Y$_n$ (UTM, meters)   Z$_n$ (meters) 
+%\end{verbatim}
+
+\item If 'sx\_sy\_header: 1', the file must have a 2-column structure:
+
+%\begin{verbatim}
+  shotID$_1$   Z$_1$ (meters) \\
+  shotID$_2$  Z$_2$ (meters) \\
+  ...        ... \\
+  shotID$_n$   Z$_n$ (meters) 
+%\end{verbatim}
+
+\end{itemize}
+
+Notes:
+\begin{itemize}
+  \item The units for each shot position (X and Y in UTM) are in meters, using the 'Universal Transverse Mercator' coordinates.
+  \item The 'shotID$_i$' parameter is the shot number, which must be found in some SU header (probably tracr, fldr ...). Remember to fix the parameter byte\_shotnumber in the parfile to indicate where to read the shotID. By default, if not specified, shotID will be read from tracr (byte 5).
+  \item The depth of the seafloor at each shot position (Z$_i$) can be expressed as positive or negative numbers. The software uses the absolute value, $|Z_i|$, for computations.
+\end{itemize}
+
+
+\section{Output Data}\label{sec5}
+
+After executing the program, the following files will be located in the output folder:
+
+\begin{itemize}
+ 
+% \item OBS_i: input OBS data is copied in the output folder, where "i" is the OBS number, from 1 to n. For just one OBS, it will be named "OBS".
+ \item \textbf{DC\_OBS\_i (SU format):} OBS gather results after DC, where "i" is the OBS number, ranging from 1 to n. If there is only one OBS, it will be named "DC\_OBS".
+    
+ \item \textbf{bathymetry\_meters.txt (ASCII file):}\\
+ This file contains the bathymetry interpolated to the grid of the model. It has 2 columns: x-axis (grid model in meters) and y-axis (bathymetry).
+ 
+ \item \textbf{Vp\_model.txt (ASCII file):}\\
+ This file contains the 2D-Vp water model if XBT data is used to characterize the water column (when 'vp\_file: 1' is specified).
+ 
+\end{itemize}
+
+
+
+\begin{thebibliography}{999}
+
+\bibitem{SU}[SU]Murillo, Alejandro E. and J. Bell. “Distributed Seismic Unix: a tool for seismic data processing.” Concurrency and Computation: Practice and Experience 11 (1999): 169-187. Seismic Unix tool: \url{https://wiki.seismic-unix.org/doku.php}.
+
+\end{thebibliography}
+
+\end{document}  
