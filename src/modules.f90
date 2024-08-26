@@ -78,6 +78,7 @@ subroutine read_parfile(rank)
   if(rank.eq.0)write(*,*)'Number of arguments passed after executable name: ',icount
   if(rank.eq.0)write(*,*)'Your Parfile containing input parameteres must be passed the last one in the command execution line'
 
+!  if ( icount.eq.3 ) then
 	call getarg(icount, par_file)	! The file name of the executable.
 	if(rank.eq.0)write(*,*)'name par_file: ',trim(adjustl(par_file))
 	file_name = trim(adjustl(par_file))
@@ -87,6 +88,7 @@ subroutine read_parfile(rank)
                 if(rank.eq.0)call ascii_art(2)
                 stop
         endif
+!  endif
 
   write(*,*)'par_file: ',trim(adjustl(par_file))
 
@@ -96,16 +98,15 @@ subroutine read_parfile(rank)
   su_file_DC = 'null'
   temp_DC = 'temp_DC'
 
-  water_velocity=1500.
-
-  NumOBS=0
+  NumOBS=1
   byte_shotnumber=byte_tracr
   sx_sy_header=0;
   TWT_option=0;
   endianness_data=1;endianness_machine=0;
   added_space_model_X=0.
   added_space_model_Y=0.
-  dmodel=0;
+  water_velocity=1500.
+  dmodel=25;
   dt=0;
   shot_depth=0;
   nt=0;
@@ -143,8 +144,8 @@ subroutine read_parfile(rank)
            read(buffer, *, iostat=ios) obs_data
         case ('nav_file:')
            read(buffer, *, iostat=ios) nav_file
-!        case ('su_file:')
-!           read(buffer, *, iostat=ios) su_file0
+        case ('su_file:')
+           read(buffer, *, iostat=ios) su_file0
         case ('vp_file:')
            read(buffer, *, iostat=ios) vp_file
         case ('input_folder:')
@@ -157,8 +158,8 @@ subroutine read_parfile(rank)
            read(buffer, *, iostat=ios) dt
         case ('dmodel:')
            read(buffer, *, iostat=ios) dmodel
-        !case ('dshots:')
-        !   read(buffer, *, iostat=ios) dshots
+        case ('dshots:')
+           read(buffer, *, iostat=ios) dshots
         case ('shot_init:')
            read(buffer, *, iostat=ios) shot_init
         case ('shot_fin:')
@@ -188,18 +189,15 @@ subroutine read_parfile(rank)
 folder_input = trim(adjustl(folder_input)) // '/'
 folder_output = trim(adjustl(folder_output)) // '/'
 
+command="mkdir " // trim(adjustl(folder_output))
+call system(command)
+
 time=(nt-1)*dt
 
 NumShots=shot_fin-shot_init+1
 
 if(added_space_model_X.eq.0)added_space_model_X=20.*dmodel
 if(added_space_model_Y.eq.0)added_space_model_Y=20.*dmodel
-
-if(dmodel.eq.0)	then
-	if(rank.eq.0)write(*,*)'ERROR: dmodel cannot be cero'
-        if(rank.eq.0)call ascii_art(2)
-	stop
-endif
 
 if(sx_sy_header.ne.0.and.sx_sy_header.ne.1)	then
 	if(rank.eq.0)write(*,*)'ERROR: sx_sy_header should be set to 0 or 1 in ',trim(adjustl(par_file))
@@ -240,16 +238,10 @@ endif
 
 file_name = trim(adjustl(folder_input)) // trim(adjustl(vp_file))
 INQUIRE(FILE=file_name, EXIST=vp_exist)
-if(.NOT. vp_exist)	then
-if(water_velocity.le.1400)	then
-	if(rank.eq.0)write(*,*) 'ERROR: vp_file not found in your your input folder &
-	and water_velocity is set to a wrong value in ',trim(adjustl(par_file))
-        if(rank.eq.0)call ascii_art(2)
-
-	stop
+if(vp_exist)	then
+	if(dshots.eq.0.and.rank.eq.0) write(*,*) "ERROR: dshots cannot be cero when vp_file is given"
+        if(dshots.eq.0.and.rank.eq.0) call ascii_art(2)
 endif
-endif
-
 
 file_name = trim(adjustl(folder_input)) // trim(adjustl(obs_data))
 INQUIRE(FILE=file_name, EXIST=obs_data_exist)
@@ -310,6 +302,11 @@ if(shot_fin.lt.shot_init) then
 	stop
 endif
 
+if(dmodel.eq.0)	then
+	if(rank.eq.0)write(*,*)'dmodel has to be greather than cero, include it in your parfile: ',trim(adjustl(par_file))
+	dmodel=dshots
+endif
+
 allocate(original_file(NumOBS))
 file_name= trim(adjustl(folder_input)) // trim(adjustl(obs_data))
 open(unit=10,file=file_name,status='old')
@@ -358,7 +355,7 @@ write(*,*)'shot_init: ',shot_init
 write(*,*)'shot_fin: ',shot_fin
 write(*,*)'nt: ',nt
 write(*,*)'dt (s): ',dt
-!write(*,*)'dshots (m): ',dshots
+write(*,*)'dshots (m): ',dshots
 write(*,*)'dmodel (m): ',dmodel
 write(*,*)'shot_depth (m): ',shot_depth
 if(.NOT. vp_exist)write(*,*)'water_velocity constant: ',water_velocity
