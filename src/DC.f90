@@ -37,8 +37,7 @@ call READ_DATA(iOBS,nSS,input)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if(rank.eq.0)write(*,*)'PROPAGATING ...'
-call DC_propagation(nSS,datum_i,datum_f,pos_shot_grid,input,output)
-
+call DC_propagation(iOBS,nSS,datum_i,datum_f,pos_shot_grid,input,output)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!    SAVING OUTPUT	                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -47,8 +46,8 @@ call DC_propagation(nSS,datum_i,datum_f,pos_shot_grid,input,output)
 if(rank.eq.0)write(*,*)'SAVING RESULTS ...'
 call WRITE_OUTPUT(iOBS,nSS,output)
 
-deallocate(input,output)
 
+deallocate(input,output)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!                        END
@@ -56,7 +55,7 @@ deallocate(input,output)
 
 end subroutine DC_function
 
-subroutine DC_propagation(nSS,&
+subroutine DC_propagation(iOBS,nSS,&
 datum_i,datum_f,pos_grid,input,output)
 
 USE mod_parfile
@@ -65,7 +64,7 @@ USE mod_model_arrays
 
 implicit none
 
-integer :: i,j
+integer :: i,j,iOBS
 integer :: nSS
 integer :: datum_i(nx),datum_f(nx)
 integer :: x_i,x_f,y_i,y_f
@@ -83,6 +82,9 @@ real, allocatable :: source(:,:),model(:,:)
 allocate(nxSou(nSS),nySou(nSS),nxRec(nSS),nyRec(nSS))
 allocate(nxx(nSS),nys(nSS),nyr(nSS))
 allocate(source(nt,nSS))
+nxSou=0;nySou=0;nxRec=0;nyRec=0;
+nxx=0;nys=0.;nyr=0;
+source=0;
 
 ddx=1+floor(added_space_model_X/dmodel) !!added model space in x-axis
 ddy=1+floor(added_space_model_Y/dmodel) !!added model space in y-axis (points)
@@ -111,11 +113,15 @@ ddy=1+floor(added_space_model_Y/dmodel) !!added model space in y-axis (points)
 	x_f=maxval(nxRec)+ddx
 	if(x_f.gt.nx)x_f=nx;	
 
-        y_i=1;y_f=maxval(nyRec)+ddy;
+        y_i=1;
+	y_f=maxval(nyRec)+ddy;
+	if(y_f.gt.ny)y_f=ny;
         
-	nx_DC=x_f-x_i+1;ny_DC=y_f-y_i+1
+	nx_DC=x_f-x_i+1;
+	ny_DC=y_f-y_i+1;
 
 	allocate(model(ny_DC,nx_DC))
+	model=0;
 	model(1:ny_DC,1:nx_DC)=DC_model(y_i:y_f,x_i:x_f)
 
 	nxx=nxRec-(x_i-1);

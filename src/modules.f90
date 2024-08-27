@@ -355,7 +355,7 @@ write(*,*)'shot_init: ',shot_init
 write(*,*)'shot_fin: ',shot_fin
 write(*,*)'nt: ',nt
 write(*,*)'dt (s): ',dt
-write(*,*)'dshots (m): ',dshots
+!write(*,*)'dshots (m): ',dshots
 write(*,*)'dmodel (m): ',dmodel
 write(*,*)'shot_depth (m): ',shot_depth
 if(.NOT. vp_exist)write(*,*)'water_velocity constant: ',water_velocity

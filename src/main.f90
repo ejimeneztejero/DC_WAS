@@ -52,6 +52,7 @@ endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ntimes=NumOBS
+
 if(numtasks.gt.1)	then
 
         if(NumOBS.gt.numtasks)        then
@@ -71,12 +72,6 @@ do itimes=1,ntimes
 iOBS=(itimes-1)*numtasks+rank+1        !!aquí sucede la paralelización
 
 if(iOBS.le.NumOBS) then
-
-	call inputs(iOBS,rank,numtasks)
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!	WRITE STREAMER DATA TO DC IN OUTPUT FOLDER
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!! START DC
@@ -100,10 +95,13 @@ if(iOBS.le.NumOBS) then
 		write(*,*)'DC for OBSs: redatuming sources from datum 1 to datum 2'
 		write(*,*)'TOTAL NUMBER OF ROUNDS: ',ntimes
 		write(*,*)'ROUND: ',itimes
+		write(*,*)'iOBS: ', iOBS
 		write(*,*)
 		write(*,*)'<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
 
 	endif
+
+	call inputs(iOBS,rank,numtasks)
 
 	call DC_function(iOBS,rank,datum1,datum2)
 

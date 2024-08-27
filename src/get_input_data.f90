@@ -80,7 +80,8 @@ if(rank.eq.0)	then
 endif
 
 call get_geometry(NumBat,length_model,nmodel,add1)	!!fuera del loop
-if(rank.eq.0)write(*,*)"Average distance between shots (meters), dshots: ",dshots
+
+if(rank.eq.0)write(*,*)"average distance between shots, dshots: ",dshots
 
 do i=1,NumShots
 
@@ -233,11 +234,12 @@ USE mod_data_arrays
 
 implicit none
 
-        integer :: j,k,ii,ishot,nn
+        integer :: j,k,ii,ishot
 	integer :: iline,itr,NumBat,ERR,nlines
         integer :: shotID,nmodel
-
-        real :: xs,ys,bat,x1,y1,twt,add1,dd
+	integer :: nn
+	real :: dd
+        real :: xs,ys,bat,x1,y1,twt,add1
         real :: length_model
 
         character (len=500) :: file_name
@@ -316,12 +318,12 @@ implicit none
 
         enddo
 
-	nn=0
+        nn=0
         do ishot=2,nlines !!number of lines nav_file
-		nn=nn+1
-		dd=dd+abs(pos_shot(ishot)-pos_shot(ishot-1))
-	enddo
-	dshots=ceiling(dd/nn)
+                nn=nn+1
+                dd=dd+abs(pos_shot(ishot)-pos_shot(ishot-1))
+        enddo
+        dshots=ceiling(dd/nn)
 
         file_name=trim(adjustl(folder_output))//'shots_position.txt'
         open(unit=12,file=file_name,status='unknown')
@@ -408,6 +410,7 @@ pos_read=byte_shotnumber
 nh = size_su_header	!Size su header = 60*4 bytes
 
 ! READ SU FILES
+!file_name = original_file
 file_name = trim(adjustl(folder_input)) // original_file(iOBS)
 
 READ(unit0+iOBS,pos=pos_read) shotID_1
