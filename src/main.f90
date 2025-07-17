@@ -39,6 +39,9 @@ endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 call read_parfile(rank)
+
+call MPI_Barrier(MPI_COMM_WORLD)
+
 call allocate_data_arrays()
 
 if(numtasks.gt.NumOBS)  then

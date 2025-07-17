@@ -124,11 +124,6 @@ allocate(sudata(nt+nh,NumShots))
 allocate(SG(nt,NumShots))
 SG=0.;sudata=0.;
 
-if(save_matlab.ne.0)Str= 'matlab_'
-if(save_gmt.ne.0)   Str= 'gmt_'
-
-file_name = trim(adjustl(folder_output)) // trim(adjustl(Str))  // trim(adjustl(original_file(iOBS))) // '.txt'
-
 do j=1,NumShots
 
 	pos_byte = pos_byte_su(j)
@@ -144,6 +139,10 @@ enddo
 
 if(save_matlab.ne.0)	then
 
+
+Str= 'matlab_'
+file_name = trim(adjustl(folder_output)) // trim(adjustl(Str))  // trim(adjustl(original_file(iOBS))) // '.txt'
+
 	open(12,FILE=file_name,STATUS='unknown')
        	do k=1,nt
 		write(12,'(20000(e12.5,2x))') (SG(k,j),j=1,NumShots)
@@ -153,6 +152,9 @@ if(save_matlab.ne.0)	then
 endif	!matlab
 
 if(save_gmt.ne.0)	then
+
+Str= 'gmt_'
+file_name = trim(adjustl(folder_output)) // trim(adjustl(Str))  // trim(adjustl(original_file(iOBS))) // '.txt'
 
 	open(12,FILE=file_name,STATUS='unknown')
 	do j=1,NumShots

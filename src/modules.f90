@@ -197,7 +197,9 @@ folder_input = trim(adjustl(folder_input)) // '/'
 folder_output = trim(adjustl(folder_output)) // '/'
 
 command="mkdir " // trim(adjustl(folder_output))
+
 if(rank.eq.0)call system(command)
+!!call system(command)
 
 time=(nt-1)*dt
 
