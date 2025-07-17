@@ -106,7 +106,7 @@ if(iOBS.le.NumOBS) then
 	call DC_function(iOBS,rank,datum1,datum2)
 
         if(save_txt.eq.1) then
-		if(rank.eq.0)write(*,*)'SAVING TXT DATA'
+		if(rank.eq.0)write(*,*)'SAVING ASCII DATA'
        		call SAVE_OBS_TXT(iOBS)
        	endif
 

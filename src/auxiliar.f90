@@ -124,8 +124,8 @@ allocate(sudata(nt+nh,NumShots))
 allocate(SG(nt,NumShots))
 SG=0.;sudata=0.;
 
-if(save_matlab.ne.0)Str= 'gmt_'
-if(save_gmt.ne.0)   Str= 'matlab_'
+if(save_matlab.ne.0)Str= 'matlab_'
+if(save_gmt.ne.0)   Str= 'gmt_'
 
 file_name = trim(adjustl(folder_output)) // trim(adjustl(Str))  // trim(adjustl(original_file(iOBS))) // '.txt'
 
@@ -157,7 +157,7 @@ if(save_gmt.ne.0)	then
 	open(12,FILE=file_name,STATUS='unknown')
 	do j=1,NumShots
 		do k=1,nt
-			write(12,*)j,SG(k,j)
+			write(12,*)j,k,SG(k,j)
 		enddo
 	enddo
 	close(12)

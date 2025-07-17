@@ -90,7 +90,7 @@ subroutine read_parfile(rank)
         endif
 !  endif
 
-  write(*,*)'par_file: ',trim(adjustl(par_file))
+  if(rank.eq.0)write(*,*)'par_file: ',trim(adjustl(par_file))
 
   su_file0 = 'null'
   nav_file = 'null'
@@ -106,7 +106,7 @@ subroutine read_parfile(rank)
   added_space_model_X=0.
   added_space_model_Y=0.
   water_velocity=1500.
-  dmodel=25;
+  dmodel=50;
   dt=0;
   shot_depth=0;
   nt=0;
@@ -122,6 +122,12 @@ subroutine read_parfile(rank)
      read(fh, '(A)', iostat=ios) buffer
      if (ios == 0) then
         line = line + 1
+
+	 buffer = adjustl(buffer)  ! Remove leading spaces
+	 if (len_trim(buffer) == 0) cycle  ! <-- Skip empty lines
+
+        ! Verificar si la línea es un comentario
+        if (buffer(1:1) .ne. '#') then
 
         ! Find the first instance of whitespace.
         pos = scan(buffer,' ')
@@ -178,9 +184,10 @@ subroutine read_parfile(rank)
            read(buffer, *, iostat=ios) save_gmt
         case ('save_matlab:')
            read(buffer, *, iostat=ios) save_matlab
-!        case default
-!           if(rank.eq.0)print *, 'WARNING in file ',trim(adjustl(par_file)),': skipping invalid label at line', line
+        case default
+           if(rank.eq.0)print *, 'WARNING in file ',trim(adjustl(par_file)),': skipping invalid label at line', line
         end select
+     end if
      end if
   end do
 
@@ -190,7 +197,7 @@ folder_input = trim(adjustl(folder_input)) // '/'
 folder_output = trim(adjustl(folder_output)) // '/'
 
 command="mkdir " // trim(adjustl(folder_output))
-call system(command)
+if(rank.eq.0)call system(command)
 
 time=(nt-1)*dt
 
