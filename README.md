@@ -6,7 +6,6 @@ As inputs:
 - Each OBS gather must be provided in a file with SU format.
 - The bathymetry data of the shots should be provided in an ASCII file.
 - Additionally, a series of parameters need to be provided through an input file, which is read during execution.
-- By default, the software assumes a constant p-wave velocity model for the water column. However, you can also provide XBT data to construct a specific Vp model.
 
 ## Installation
 - To install and use this software effectively, please refer to the instructions provided in the PDF manual located in this directory:  [docs/UserGuide_DC_WAS.pdf](docs/UserGuide_DC_WAS.pdf)
