@@ -23,5 +23,6 @@ For testing the code, please download the sample data test at Zenodo [2] and fol
 Feel free to customize this README as needed based on your specific requirements and preferences.
 
 ## References
-- The software was used in \cite{estela} and is available on GitHub: https://github.com/ejimeneztejero/DC_WAS.
-- A dataset for testing and validation is available on Zenodo \cite{estela2} (DOI: https://doi.org/10.5281/zenodo.16031283).
+- The software was used in [1] and a dataset for testing and validation is available on Zenodo [2]:
+[1] C E Jimenez-Tejero, M Prada, L Gomez de la Peña, C R Ranero, V Sallares, Downward continuation of wide-angle seismic data: implications for traveltime tomography uncertainty, Geophysical Journal International, Volume 241, Issue 3, June 2025, Pages 1868–1880,  \url{https://doi.org/10.1093/gji/ggaf137}.
+[2] Jimenez Tejero, C. E. (2025). Data sample for testing the code: Downward Continuation for WAS data (DC_WAS) [Data set]. In Geophysical Journal International (Vol. 241, Number 3, pp. 1868–1880). Zenodo. https://doi.org/10.5281/zenodo.16031283.
